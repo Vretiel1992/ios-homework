@@ -33,39 +33,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E429A98F27DD24E90023C3F8 /* Application */ = {
-			isa = PBXGroup;
-			children = (
-				E488890C27C28C4D005105C6 /* AppDelegate.swift */,
-				E488890E27C28C4D005105C6 /* SceneDelegate.swift */,
-			);
-			path = Application;
-			sourceTree = "<group>";
-		};
-		E429A99027DD24FC0023C3F8 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		E429A99127DD250A0023C3F8 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Controllers;
-			sourceTree = "<group>";
-		};
-		E429A99227DD25120023C3F8 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				E488891527C28C4E005105C6 /* Assets.xcassets */,
-				E488891727C28C4E005105C6 /* LaunchScreen.storyboard */,
-				E488891A27C28C4E005105C6 /* Info.plist */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		E488890027C28C4D005105C6 = {
 			isa = PBXGroup;
 			children = (
@@ -85,10 +52,11 @@
 		E488890B27C28C4D005105C6 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
-				E429A98F27DD24E90023C3F8 /* Application */,
-				E429A99027DD24FC0023C3F8 /* Model */,
-				E429A99127DD250A0023C3F8 /* Controllers */,
-				E429A99227DD25120023C3F8 /* Resources */,
+				E488890C27C28C4D005105C6 /* AppDelegate.swift */,
+				E488890E27C28C4D005105C6 /* SceneDelegate.swift */,
+				E488891527C28C4E005105C6 /* Assets.xcassets */,
+				E488891727C28C4E005105C6 /* LaunchScreen.storyboard */,
+				E488891A27C28C4E005105C6 /* Info.plist */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
