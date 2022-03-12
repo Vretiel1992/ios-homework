@@ -7,12 +7,6 @@
 
 import UIKit
 
-//struct Post {
-//    let title: String
-//}
-//
-//let titlePost = Post(title: "Мой пост")
-
 class FeedViewController: UIViewController {
     
     private let displayButtons: UIButton = {
