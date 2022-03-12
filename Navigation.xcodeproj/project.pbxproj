@@ -94,18 +94,10 @@
 			isa = PBXGroup;
 			children = (
 				E45F43DA27D6699F0012D112 /* Application */,
-				E4C99D9C27DA812500FB2674 /* Model */,
 				E45F43DB27D669D80012D112 /* Controllers */,
 				E45F43DC27D66A030012D112 /* Resources */,
 			);
 			path = Navigation;
-			sourceTree = "<group>";
-		};
-		E4C99D9C27DA812500FB2674 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
