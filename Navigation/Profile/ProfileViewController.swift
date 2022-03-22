@@ -9,12 +9,12 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
-    var profileHeaderView = ProfileHeaderView()
+    private lazy var profileHeaderView = ProfileHeaderView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .lightGray
+        self.view.backgroundColor = .white
         self.title = "Профиль"
         self.view.addSubview(profileHeaderView)
     }
@@ -22,5 +22,7 @@ class ProfileViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         profileHeaderView.frame = self.view.safeAreaLayoutGuide.layoutFrame
+        profileHeaderView.backgroundColor = .lightGray
     }
 }
+
