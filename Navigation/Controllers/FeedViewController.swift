@@ -9,6 +9,8 @@ import UIKit
 
 class FeedViewController: UIViewController {
     
+    var post = Post(title: "Мой пост")
+    
     private let displayButtons: UIButton = {
         let button = UIButton()
         button.setTitle("Перейти на пост", for: .normal)
@@ -22,7 +24,7 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        self.view.backgroundColor = .white
         self.title = "Лента"
         self.navigationItem.backButtonTitle = ""
         self.displayButtons.addTarget(self,
@@ -34,6 +36,7 @@ class FeedViewController: UIViewController {
     
     @objc func performDisplayVC(parameterSender: Any) {
         let postViewController = PostViewController()
+        postViewController.titlePost = post.title
         self.navigationController?.pushViewController(postViewController, animated: true)
     }
     
@@ -46,10 +49,4 @@ class FeedViewController: UIViewController {
         ])
     }
 }
-
-struct Post {
-    let title: String
-}
-
-let titlePost = Post(title: "Мой пост")
 

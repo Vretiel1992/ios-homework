@@ -22,6 +22,7 @@ class MainTabBarController: UITabBarController {
         let feedViewController = createNavController(vc: FeedViewController(), itemName: "Лента", itemImage: "house")
         
         let profileViewController = createNavController(vc: ProfileViewController(), itemName: "Профиль", itemImage: "person.circle")
+        profileViewController.navigationBar.prefersLargeTitles = false
         
         viewControllers = [feedViewController, profileViewController]
     }
