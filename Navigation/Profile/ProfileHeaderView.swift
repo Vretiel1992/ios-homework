@@ -7,26 +7,30 @@
 
 import UIKit
 
+protocol ProfileHeaderViewProtocol: AnyObject {
+    func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void)
+}
+
 class ProfileHeaderView: UIView, UITextFieldDelegate {
     
     private var statusText: String = "Waiting for something..."
     
-    private lazy var myImageView: UIImageView = {
+    private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         let profileImage = UIImage(named: "TimCook")
         imageView.image = profileImage
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.frame = CGRect(x: 16, y: 16, width: 120, height: 120)
-        imageView.layer.cornerRadius = imageView.frame.size.width / 2
+        imageView.frame.size = CGSize(width: 120, height: 120)
+        imageView.layer.cornerRadius = 50
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.white.cgColor
         return imageView
     }()
     
-    private lazy var showStatusButton: UIButton = {
+    private lazy var setStatusButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Show status", for: .normal)
+        button.setTitle("Edit status", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 16
@@ -39,7 +43,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         return button
     }()
     
-    private lazy var nameLabel: UILabel = {
+    private lazy var fullNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Tim Cook"
@@ -48,7 +52,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         return label
     }()
     
-    private lazy var signatureLabel: UILabel = {
+    private lazy var statusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Waiting for something..."
@@ -64,6 +68,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         textField.textColor = .black
         textField.backgroundColor = .white
         textField.textAlignment = .center
+        textField.clearButtonMode = .always
         textField.placeholder = "enter text"
         textField.layer.cornerRadius = 12
         textField.layer.borderWidth = 1.0
@@ -72,7 +77,26 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         return textField
     }()
     
-    var buttonTopConstraint: NSLayoutConstraint?
+    private lazy var labelsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private lazy var infoStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 20
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    private var buttonTopConstraint: NSLayoutConstraint?
+    
+    weak var delegate: ProfileHeaderViewProtocol?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -82,69 +106,68 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-        
+    
     private func setupView() {
         
-        self.addSubview(myImageView)
-        self.addSubview(showStatusButton)
-        self.showStatusButton.addTarget(self,
-                                        action: #selector(buttonPressed(parameterSender:)),
-                                        for: .touchUpInside)
-        self.addSubview(nameLabel)
-        self.addSubview(signatureLabel)
+        self.addSubview(self.infoStackView)
+        self.addSubview(self.setStatusButton)
+        self.addSubview(self.statusTextField)
+        self.infoStackView.addArrangedSubview(self.avatarImageView)
+        self.infoStackView.addArrangedSubview(self.labelsStackView)
+        self.labelsStackView.addArrangedSubview(self.fullNameLabel)
+        self.labelsStackView.addArrangedSubview(self.statusLabel)
+        
+        self.setStatusButton.addTarget(self,
+                                       action: #selector(didTapStatusButton(parameterSender:)),
+                                       for: .touchUpInside)
+        
         self.statusTextField.addTarget(self,
                                        action: #selector(statusTextChanged(parameterSender:)),
                                        for: .editingChanged)
         setConstraints()
     }
     
-    @objc func buttonPressed(parameterSender: Any) {
-            if self.statusTextField.isHidden {
-                self.addSubview(self.statusTextField)
-                statusTextField.delegate = self
-                
-                let leadingStatusTextFieldConstraint = self.statusTextField.leadingAnchor.constraint(equalTo: self.signatureLabel.leadingAnchor)
-                let trailingStatusTextFieldConstraint = self.statusTextField.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -16)
-                let topStatusTextFieldConstraint = self.statusTextField.topAnchor.constraint(equalTo: self.signatureLabel.bottomAnchor, constant: 5)
-                let heighStatusTextFieldConstraint = self.statusTextField.heightAnchor.constraint(equalToConstant: 40)
-                
-                self.buttonTopConstraint?.isActive = false
-                self.buttonTopConstraint = self.showStatusButton.topAnchor.constraint(equalTo: self.statusTextField.bottomAnchor, constant: 10)
-                
-                NSLayoutConstraint.activate([
-                    leadingStatusTextFieldConstraint,
-                    trailingStatusTextFieldConstraint,
-                    topStatusTextFieldConstraint,
-                    heighStatusTextFieldConstraint,
-                    self.buttonTopConstraint
-                ].compactMap( { $0 }))
-                
-                UIView.animate(withDuration: 0.3) {
-                    self.layoutIfNeeded()
-                } completion: { _ in
-                    self.statusTextField.isHidden = false
-                }
-                
-                self.showStatusButton.setTitle("Set status", for: .normal)
-            } else {
-                self.signatureLabel.text = self.statusText
-                self.statusTextField.text = nil
-                self.buttonTopConstraint?.isActive = false
-                self.buttonTopConstraint = self.showStatusButton.topAnchor.constraint(equalTo: self.signatureLabel.bottomAnchor, constant: 34)
-                
-                NSLayoutConstraint.activate([
-                    self.buttonTopConstraint
-                ].compactMap( { $0 }))
-                
-                UIView.animate(withDuration: 0.3) {
-                    self.layoutIfNeeded()
-                } completion: { _ in
-                    self.statusTextField.isHidden = true
-                }
-                self.statusTextField.removeFromSuperview()
-                
-                self.showStatusButton.setTitle("Show status", for: .normal)
-            }
+    @objc func didTapStatusButton(parameterSender: Any) {
+        if self.statusTextField.isHidden {
+            self.addSubview(self.statusTextField)
+            statusTextField.delegate = self
+            
+            self.buttonTopConstraint?.isActive = false
+            
+            let topConstraint = self.statusTextField.topAnchor.constraint(equalTo: self.infoStackView.bottomAnchor, constant: 10)
+            let leadingConstraint = self.statusTextField.leadingAnchor.constraint(equalTo: self.statusLabel.leadingAnchor)
+            let trailingConstraint = self.statusTextField.trailingAnchor.constraint(equalTo: self.infoStackView.trailingAnchor)
+            let heightTextFieldConstraint = self.statusTextField.heightAnchor.constraint(equalToConstant: 40)
+            self.buttonTopConstraint = self.setStatusButton.topAnchor.constraint(equalTo: self.statusTextField.bottomAnchor, constant: 20)
+            
+            NSLayoutConstraint.activate([
+                topConstraint,
+                leadingConstraint,
+                trailingConstraint,
+                heightTextFieldConstraint,
+                self.buttonTopConstraint
+            ].compactMap({ $0 }))
+            
+            self.setStatusButton.setTitle("Set status", for: .normal)
+        } else {
+            self.statusLabel.text = self.statusText
+            self.statusTextField.text = nil
+            
+            self.buttonTopConstraint?.isActive = false
+            
+            self.buttonTopConstraint = self.setStatusButton.topAnchor.constraint(equalTo: self.infoStackView.bottomAnchor, constant: 20)
+            
+            NSLayoutConstraint.activate([
+                self.buttonTopConstraint
+            ].compactMap( { $0 }))
+            
+            self.statusTextField.removeFromSuperview()
+            self.setStatusButton.setTitle("Edit status", for: .normal)
+        }
+        
+        self.delegate?.didTapStatusButton(textFieldIsVisible: self.statusTextField.isHidden) { [weak self] in
+            self?.statusTextField.isHidden.toggle()
+        }
     }
     
     @objc func statusTextChanged(parameterSender: Any) {
@@ -152,41 +175,30 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     }
     
     private func setConstraints() {
-        let leadingMyImageViewConstraint = self.myImageView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 16)
-        let topMyImageViewConstraint = self.myImageView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 16)
-        let heightMyImageViewConstraint = self.myImageView.heightAnchor.constraint(equalToConstant: 120)
-        let widthMyImageViewConstraint = self.myImageView.widthAnchor.constraint(equalToConstant: 120)
+        let topConstraint = self.infoStackView.topAnchor.constraint(equalTo: self.topAnchor)
+        let leadingConstraint = self.infoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20)
+        let trailingConstraint = self.infoStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20)
         
-        let topNameLabelConstraint = self.nameLabel.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 27)
-        let leadingNameLabelConstraint = self.nameLabel.leadingAnchor.constraint(equalTo: self.myImageView.trailingAnchor, constant: 16)
+        let imageViewAspectRatio = self.avatarImageView.heightAnchor.constraint(equalTo: self.avatarImageView.widthAnchor, multiplier: 1.0)
         
-        let bottomSignatureLabelConstraint = self.signatureLabel.bottomAnchor.constraint(equalTo: self.myImageView.bottomAnchor, constant: -16)
-        let leadingSignatureLabelConstraint = self.signatureLabel.leadingAnchor.constraint(equalTo: self.myImageView.trailingAnchor, constant: 16)
-        
-        self.buttonTopConstraint = self.showStatusButton.topAnchor.constraint(equalTo: self.signatureLabel.bottomAnchor, constant: 34)
+        self.buttonTopConstraint = self.setStatusButton.topAnchor.constraint(equalTo: self.infoStackView.bottomAnchor, constant: 20)
         self.buttonTopConstraint?.priority = UILayoutPriority(rawValue: 999)
-        let leadingShowStatusButtonConstraint = self.showStatusButton.leadingAnchor.constraint(equalTo: self.myImageView.leadingAnchor)
-        let trailingShowStatusButtonConstraint = self.showStatusButton.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -16)
-        let heightShowStatusButtonConstraint = self.showStatusButton.heightAnchor.constraint(equalToConstant: 50)
+        let leadingButtonConstraint = self.setStatusButton.leadingAnchor.constraint(equalTo: self.infoStackView.leadingAnchor)
+        let trailingButtonConstraint = self.setStatusButton.trailingAnchor.constraint(equalTo: self.infoStackView.trailingAnchor)
+        let bottomButtonConstraint = self.setStatusButton.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        let heightButtonConstraint = self.setStatusButton.heightAnchor.constraint(equalToConstant: 50)
         
         NSLayoutConstraint.activate([
-            leadingMyImageViewConstraint,
-            topMyImageViewConstraint,
-            heightMyImageViewConstraint,
-            widthMyImageViewConstraint,
+            topConstraint,
+            leadingConstraint,
+            trailingConstraint,
+            imageViewAspectRatio,
             self.buttonTopConstraint,
-            leadingShowStatusButtonConstraint,
-            trailingShowStatusButtonConstraint,
-            heightShowStatusButtonConstraint,
-            topNameLabelConstraint,
-            leadingNameLabelConstraint,
-            bottomSignatureLabelConstraint,
-            leadingSignatureLabelConstraint
-        ].compactMap( { $0 }))
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.statusTextField.resignFirstResponder()
+            leadingButtonConstraint,
+            trailingButtonConstraint,
+            bottomButtonConstraint,
+            heightButtonConstraint
+        ].compactMap({ $0 }))
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
