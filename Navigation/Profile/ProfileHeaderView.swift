@@ -13,7 +13,7 @@ protocol ProfileHeaderViewProtocol: AnyObject {
 
 class ProfileHeaderView: UIView, UITextFieldDelegate {
     
-    private var statusText: String = "Waiting for something..."
+    private var statusText: String = "Установите статус..."
     
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -30,7 +30,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     
     private lazy var setStatusButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Edit status", for: .normal)
+        button.setTitle("Изменить статус", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 16
@@ -46,7 +46,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     private lazy var fullNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Tim Cook"
+        label.text = "Тим Кук"
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         label.textColor = .black
         return label
@@ -55,7 +55,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     private lazy var statusLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Waiting for something..."
+        label.text = "Установите статус..."
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         label.textColor = .gray
         return label
@@ -69,7 +69,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         textField.backgroundColor = .white
         textField.textAlignment = .center
         textField.clearButtonMode = .always
-        textField.placeholder = "enter text"
+        textField.placeholder = "введите текст"
         textField.layer.cornerRadius = 12
         textField.layer.borderWidth = 1.0
         textField.layer.borderColor = UIColor.black.cgColor
@@ -148,7 +148,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
                 self.buttonTopConstraint
             ].compactMap({ $0 }))
             
-            self.setStatusButton.setTitle("Set status", for: .normal)
+            self.setStatusButton.setTitle("Применить статус", for: .normal)
         } else {
             self.statusLabel.text = self.statusText
             self.statusTextField.text = nil
@@ -162,7 +162,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
             ].compactMap( { $0 }))
             
             self.statusTextField.removeFromSuperview()
-            self.setStatusButton.setTitle("Edit status", for: .normal)
+            self.setStatusButton.setTitle("Изменить статус", for: .normal)
         }
         
         self.delegate?.didTapStatusButton(textFieldIsVisible: self.statusTextField.isHidden) { [weak self] in

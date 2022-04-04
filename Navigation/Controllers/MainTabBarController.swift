@@ -14,21 +14,25 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = #colorLiteral(red: 0.9490196078, green: 0.9490196078, blue: 0.968627451, alpha: 1)
+        self.view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+//        self.tabBar.backgroundColor = .systemGray6
+        self.tabBar.layer.borderWidth = 0.5
+        self.tabBar.layer.borderColor = UIColor.systemGray4.cgColor
+        
         setupTabBar()
     }
     
     private func setupTabBar() {
         let feedViewController = createNavController(vc: FeedViewController(), itemName: "Лента", itemImage: "house")
         
-        let profileViewController = createNavController(vc: ProfileViewController(), itemName: "Профиль", itemImage: "person.circle")
-        profileViewController.navigationBar.prefersLargeTitles = false
+        let logInViewController = createNavController(vc: LogInViewController(), itemName: "Профиль", itemImage: "person.circle")
         
-        viewControllers = [feedViewController, profileViewController]
+        logInViewController.navigationBar.isHidden = true
+        
+        viewControllers = [feedViewController, logInViewController]
     }
     
     private func createNavController(vc: UIViewController, itemName: String, itemImage: String) -> UINavigationController {
-        
         let item = UITabBarItem(title: itemName, image: UIImage(systemName: itemImage), tag: 0)
         let navController = UINavigationController(rootViewController: vc)
         navController.navigationBar.prefersLargeTitles = true
