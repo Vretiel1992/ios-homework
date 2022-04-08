@@ -15,6 +15,8 @@
 		E488891127C28C4D005105C6 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E488891027C28C4D005105C6 /* MainTabBarController.swift */; };
 		E488891627C28C4E005105C6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E488891527C28C4E005105C6 /* Assets.xcassets */; };
 		E488891927C28C4E005105C6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E488891727C28C4E005105C6 /* LaunchScreen.storyboard */; };
+		E48C718027F5EB1000C6E973 /* ColorSet.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E48C717F27F5EB1000C6E973 /* ColorSet.xcassets */; };
+		E48C718427F5EE5C00C6E973 /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48C718327F5EE5C00C6E973 /* LogInViewController.swift */; };
 		E4A3F0B127DF78C1002CA9D0 /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A3F0B027DF78C1002CA9D0 /* ProfileHeaderView.swift */; };
 		E4A3F0B527E24E07002CA9D0 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A3F0B427E24E07002CA9D0 /* Post.swift */; };
 		E4C99D9E27DA831400FB2674 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4C99D9D27DA831400FB2674 /* InfoViewController.swift */; };
@@ -31,6 +33,8 @@
 		E488891527C28C4E005105C6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E488891827C28C4E005105C6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E488891A27C28C4E005105C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E48C717F27F5EB1000C6E973 /* ColorSet.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ColorSet.xcassets; sourceTree = "<group>"; };
+		E48C718327F5EE5C00C6E973 /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
 		E4A3F0B027DF78C1002CA9D0 /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		E4A3F0B427E24E07002CA9D0 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		E4C99D9D27DA831400FB2674 /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
@@ -71,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				E488891527C28C4E005105C6 /* Assets.xcassets */,
+				E48C717F27F5EB1000C6E973 /* ColorSet.xcassets */,
 				E488891727C28C4E005105C6 /* LaunchScreen.storyboard */,
 				E488891A27C28C4E005105C6 /* Info.plist */,
 			);
@@ -110,6 +115,7 @@
 			children = (
 				E4A3F0B027DF78C1002CA9D0 /* ProfileHeaderView.swift */,
 				E45F43DF27D678010012D112 /* ProfileViewController.swift */,
+				E48C718327F5EE5C00C6E973 /* LogInViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -182,6 +188,7 @@
 			files = (
 				E488891927C28C4E005105C6 /* LaunchScreen.storyboard in Resources */,
 				E488891627C28C4E005105C6 /* Assets.xcassets in Resources */,
+				E48C718027F5EB1000C6E973 /* ColorSet.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +201,7 @@
 			files = (
 				E453CAD027D79AF5000E78AC /* PostViewController.swift in Sources */,
 				E488891127C28C4D005105C6 /* MainTabBarController.swift in Sources */,
+				E48C718427F5EE5C00C6E973 /* LogInViewController.swift in Sources */,
 				E488890D27C28C4D005105C6 /* AppDelegate.swift in Sources */,
 				E45F43E027D678010012D112 /* ProfileViewController.swift in Sources */,
 				E488890F27C28C4D005105C6 /* SceneDelegate.swift in Sources */,

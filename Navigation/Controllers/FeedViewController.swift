@@ -75,8 +75,8 @@ class FeedViewController: UIViewController {
             self.centerStackView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             self.centerStackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             self.centerStackView.heightAnchor.constraint(equalToConstant: 110),
-            self.centerStackView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            self.centerStackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20)
+            self.centerStackView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            self.centerStackView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
 }
