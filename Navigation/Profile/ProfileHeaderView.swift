@@ -61,7 +61,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         return label
     }()
     
-    private lazy var statusTextField: UITextField = {
+    lazy var statusTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -108,7 +108,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     }
     
     private func setupView() {
-        
+        self.backgroundColor = .blue
         self.addSubview(self.infoStackView)
         self.addSubview(self.setStatusButton)
         self.addSubview(self.statusTextField)
@@ -205,5 +205,6 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         self.statusTextField.resignFirstResponder()
         return true
     }
+    
 }
 

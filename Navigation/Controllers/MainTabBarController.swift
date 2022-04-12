@@ -15,7 +15,6 @@ class MainTabBarController: UITabBarController {
         super.viewDidLoad()
 
         self.view.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-//        self.tabBar.backgroundColor = .systemGray6
         self.tabBar.layer.borderWidth = 0.5
         self.tabBar.layer.borderColor = UIColor.systemGray4.cgColor
         

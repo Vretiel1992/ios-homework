@@ -8,6 +8,8 @@
 import UIKit
 
 struct Post {
-    
-    var title: String
+    let author, description, image: String
+    var likes, views: Int
 }
+
+var dataSource: [Post] = []

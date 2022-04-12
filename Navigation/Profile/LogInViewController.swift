@@ -53,6 +53,7 @@ class LogInViewController: UIViewController {
         textField.placeholder = "введите email"
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.lightGray.cgColor
+        textField.clearButtonMode = .always
         textField.autocapitalizationType = .none
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -66,6 +67,7 @@ class LogInViewController: UIViewController {
         textField.indent(size: 10)
         textField.tintColor = appMyColor
         textField.placeholder = "введите пароль"
+        textField.clearButtonMode = .always
         textField.autocapitalizationType = .none
         textField.isSecureTextEntry = true
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -122,67 +124,44 @@ class LogInViewController: UIViewController {
         self.view.backgroundColor = .white
         self.view.addSubview(self.scrollView)
         self.scrollView.addSubview(self.contentView)
-        self.contentView.addSubview(logoImage)
-        self.contentView.addSubview(textFieldStackView)
-        self.contentView.addSubview(displayButton)
-        self.textFieldStackView.addArrangedSubview(loginTextField)
-        self.textFieldStackView.addArrangedSubview(passwordTextField)
+        self.contentView.addSubview(self.logoImage)
+        self.contentView.addSubview(self.textFieldStackView)
+        self.contentView.addSubview(self.displayButton)
+        self.textFieldStackView.addArrangedSubview(self.loginTextField)
+        self.textFieldStackView.addArrangedSubview(self.passwordTextField)
         self.loginTextField.delegate = self
         self.passwordTextField.delegate = self
         
     }
     
     private func setupConstraints() {
-        let scrollViewTopConstraint = self.scrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor)
-        let scrollViewLeadingConstraint = self.scrollView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
-        let scrollViewTrailingConstraint = self.scrollView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
-        let scrollViewBottomConstraint = self.scrollView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
-        
-        let contentViewTopConstraint = self.contentView.topAnchor.constraint(equalTo: self.scrollView.topAnchor)
-        let contentViewLeadingConstraint = self.contentView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor)
-        let contentViewTrailingConstraint = self.contentView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor)
-        let contentViewWidth = self.contentView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor)
-        let contentViewBottomConstraint = self.contentView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor)
-        
-        let logoImageTopConstraint = self.logoImage.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 120)
-        let logoImageCenterXConstraint = self.logoImage.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
-        let logoImageHeight = self.logoImage.heightAnchor.constraint(equalToConstant: 100)
-        let logoImageAspectRatio = self.logoImage.heightAnchor.constraint(equalTo: self.logoImage.widthAnchor, multiplier: 1.0)
-        
-        let textFieldStackViewTopConstraint = self.textFieldStackView.topAnchor.constraint(equalTo: self.logoImage.bottomAnchor, constant: 120)
-        let textFieldStackViewLeadingConstraint = self.textFieldStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16)
-        let textFieldStackViewTrailingConstraint = self.textFieldStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16)
-        let textFieldStackViewHeight = self.textFieldStackView.heightAnchor.constraint(equalToConstant: 100)
-        
-        let displayButtonTopConstraint = self.displayButton.topAnchor.constraint(equalTo: self.textFieldStackView.bottomAnchor, constant: 30)
-        let displayButtonLeadingConstraint = self.displayButton.leadingAnchor.constraint(equalTo: self.textFieldStackView.leadingAnchor)
-        let displayButtonTrailingConstraint = self.displayButton.trailingAnchor.constraint(equalTo: self.textFieldStackView.trailingAnchor)
-        let displayButtonBottomConstraint = self.displayButton.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
-        let displayButtonHeight = self.displayButton.heightAnchor.constraint(equalToConstant: 50)
-        
         NSLayoutConstraint.activate([
-            scrollViewTopConstraint,
-            scrollViewLeadingConstraint,
-            scrollViewTrailingConstraint,
-            scrollViewBottomConstraint,
-            contentViewTopConstraint,
-            contentViewWidth,
-            contentViewLeadingConstraint,
-            contentViewTrailingConstraint,
-            contentViewBottomConstraint,
-            logoImageTopConstraint,
-            logoImageCenterXConstraint,
-            logoImageHeight,
-            logoImageAspectRatio,
-            textFieldStackViewTopConstraint,
-            textFieldStackViewLeadingConstraint,
-            textFieldStackViewTrailingConstraint,
-            textFieldStackViewHeight,
-            displayButtonTopConstraint,
-            displayButtonLeadingConstraint,
-            displayButtonTrailingConstraint,
-            displayButtonBottomConstraint,
-            displayButtonHeight
+            self.scrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            self.scrollView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            self.scrollView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            self.scrollView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+            
+            self.contentView.topAnchor.constraint(equalTo: self.scrollView.topAnchor),
+            self.contentView.leadingAnchor.constraint(equalTo: self.scrollView.leadingAnchor),
+            self.contentView.trailingAnchor.constraint(equalTo: self.scrollView.trailingAnchor),
+            self.contentView.widthAnchor.constraint(equalTo: self.scrollView.widthAnchor),
+            self.contentView.bottomAnchor.constraint(equalTo: self.scrollView.bottomAnchor),
+            
+            self.logoImage.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 120),
+            self.logoImage.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
+            self.logoImage.heightAnchor.constraint(equalToConstant: 100),
+            self.logoImage.heightAnchor.constraint(equalTo: self.logoImage.widthAnchor, multiplier: 1.0),
+            
+            self.textFieldStackView.topAnchor.constraint(equalTo: self.logoImage.bottomAnchor, constant: 120),
+            self.textFieldStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 16),
+            self.textFieldStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -16),
+            self.textFieldStackView.heightAnchor.constraint(equalToConstant: 100),
+            
+            self.displayButton.topAnchor.constraint(equalTo: self.textFieldStackView.bottomAnchor, constant: 30),
+            self.displayButton.leadingAnchor.constraint(equalTo: self.textFieldStackView.leadingAnchor),
+            self.displayButton.trailingAnchor.constraint(equalTo: self.textFieldStackView.trailingAnchor),
+            self.displayButton.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            self.displayButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
