@@ -11,7 +11,7 @@ protocol ProfileHeaderViewProtocol: AnyObject {
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void)
 }
 
-class ProfileHeaderView: UIView, UITextFieldDelegate {
+class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     
     private var statusText: String = "Установите статус..."
     
@@ -98,10 +98,15 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     
     weak var delegate: ProfileHeaderViewProtocol?
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
         self.setupView()
     }
+    
+//    override init(frame: CGRect) {
+//        super.init(frame: frame)
+//        self.setupView()
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -112,6 +117,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         self.addSubview(self.infoStackView)
         self.addSubview(self.setStatusButton)
         self.addSubview(self.statusTextField)
+        self.addSubview(self.labelsStackView)
         self.infoStackView.addArrangedSubview(self.avatarImageView)
         self.infoStackView.addArrangedSubview(self.labelsStackView)
         self.labelsStackView.addArrangedSubview(self.fullNameLabel)

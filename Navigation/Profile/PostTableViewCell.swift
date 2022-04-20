@@ -33,8 +33,8 @@ class PostTableViewCell: UITableViewCell {
         label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textColor = .black
         label.numberOfLines = 2
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
-//        label.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
         return label
     }()
     
@@ -52,7 +52,6 @@ class PostTableViewCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .black
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.setContentCompressionResistancePriority(UILayoutPriority(100), for: .vertical)
         return imageView
     }()
     
@@ -112,9 +111,12 @@ class PostTableViewCell: UITableViewCell {
     private func setupView() {
         contentView.backgroundColor = .white
         contentView.addSubview(self.backView)
+
+        self.backView.addSubview(self.authorLabel)
+//        self.postStackView.addArrangedSubview(self.authorLabel)
+        self.backView.addSubview(self.pictureView)
         self.backView.addSubview(self.postStackView)
-        self.postStackView.addArrangedSubview(self.authorLabel)
-        self.postStackView.addArrangedSubview(self.pictureView)
+//        self.postStackView.addArrangedSubview(self.pictureView)
         self.postStackView.addArrangedSubview(self.descriptionLabel)
         self.postStackView.addArrangedSubview(self.likesAndViewsStackView)
         self.likesAndViewsStackView.addArrangedSubview(self.likesLabel)
@@ -128,8 +130,15 @@ class PostTableViewCell: UITableViewCell {
             self.backView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             self.backView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         
-          
-            self.postStackView.topAnchor.constraint(equalTo: self.backView.topAnchor, constant: 16),
+            self.authorLabel.topAnchor.constraint(equalTo: self.backView.topAnchor, constant: 16),
+            self.authorLabel.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 16),
+            self.authorLabel.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -16),
+            
+            self.pictureView.topAnchor.constraint(equalTo: self.authorLabel.bottomAnchor, constant: 16),
+            self.pictureView.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor),
+            self.pictureView.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor),
+            
+            self.postStackView.topAnchor.constraint(equalTo: self.pictureView.bottomAnchor, constant: 16),
             self.postStackView.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 16),
             self.postStackView.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -16),
             self.postStackView.bottomAnchor.constraint(equalTo: self.backView.bottomAnchor, constant: -16)
@@ -143,7 +152,7 @@ extension PostTableViewCell: Setupable {
         self.authorLabel.text = viewModel.author
         self.pictureView.image = UIImage(named: viewModel.image)
         self.descriptionLabel.text = viewModel.description
-        self.likesLabel.text = "Likes: \(viewModel.likes)"
-        self.viewsLabel.text = "Views: \(viewModel.views)"
+        self.likesLabel.text = "Лайков: \(viewModel.likes)"
+        self.viewsLabel.text = "Просмотров: \(viewModel.views)"
     }
 }

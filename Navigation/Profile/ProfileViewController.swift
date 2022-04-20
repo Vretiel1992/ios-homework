@@ -10,26 +10,25 @@ import UIKit
 class ProfileViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.rowHeight = UITableView.automaticDimension
+//        tableView.estimatedSectionHeaderHeight = UITableView.automaticDimension
+//        tableView.sectionHeaderHeight = 170
         tableView.estimatedRowHeight = 44
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DefaultCell")
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "ArticleCell")
+        
+        tableView.register(ProfileHeaderView.self, forHeaderFooterViewReuseIdentifier: "header")
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .systemGray6
         return tableView
     }()
     
-        private lazy var profileHeaderView: ProfileHeaderView = {
-            let view = ProfileHeaderView(frame: .zero)
-            view.delegate = self
-            view.translatesAutoresizingMaskIntoConstraints = false
-            return view
-        }()
-    
-    private var heightConstraint: NSLayoutConstraint?
+    var heightHeaderInSection: CGFloat = 170
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,24 +48,13 @@ class ProfileViewController: UIViewController {
     private func setupView() {
         self.view.backgroundColor = .systemGray6
         self.view.addSubview(self.tableView)
-//        self.tableView.addSubview(self.profileHeaderView)
-
-        self.heightConstraint = self.profileHeaderView.heightAnchor.constraint(equalToConstant: 170)
         
         NSLayoutConstraint.activate([
-            
             self.tableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
             self.tableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
             self.tableView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
             self.tableView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
-            
-//            self.profileHeaderView.topAnchor.constraint(equalTo: self.tableView.topAnchor),
-//            self.profileHeaderView.leadingAnchor.constraint(equalTo: self.tableView.leadingAnchor),
-//            self.profileHeaderView.trailingAnchor.constraint(equalTo: self.tableView.trailingAnchor),
-
-            self.heightConstraint
-        ].compactMap({ $0 }))
-    }
+        ])}
     
     private func loadDataSource() {
         dataSource.append(
@@ -94,13 +82,13 @@ class ProfileViewController: UIViewController {
                  likes: 677,
                  views: 883))
         dataSource.append(
-            Post(author: "Тим Кук получил первое вознаграждение акциями за девять лет",
+            Post(author: "Тим Кук получил первое вознаграждение акциями за 9 лет",
                  description: "Apple наградила своего гендиректора правом на получение 334 000 акций компании.\nЭто первое вознаграждение Тима Кука как главы Apple с 2011 года. Тогда он возглавил компанию и получил первый грант в размере 1 млн акций, передача которых растянута на 10 лет. Акции — это основное вознаграждение Кука, хотя он также получает зарплату и ежегодный бонус: в 2019-м $3 млн и $7,67 млн соответственно. Но с учетом полученной доли акций его общий доход за год превысил $125 млн.",
                  image: "005",
                  likes: 2218,
                  views: 2904))
         dataSource.append(
-            Post(author: "1447 к 1: соотношение доходов главы Apple к ее штатному сотруднику",
+            Post(author: "1447 к 1: соотношение доходов главы Apple к штатному сотруднику",
                  description: "В августе рыночная стоимость Apple все еще приближалась к 2,5 триллионам долларов, а за прошедшее время она перешагнула отметку в 3 триллиона долларов. За последние пару лет сотрудники Apple, как никогда ранее, открыто заявили о проблемах внутренней культуры компании, включая стремление вернуться в офис и прозрачность заработной платы, а также многое другое.\nApple отмечает в собственном документе, что после сложения “базовой зарплаты, бонусов, комиссионных и справедливой стоимости на дату предоставления акций, предоставленных сотрудникам в 2021 году”, чтобы найти зарплату среднестатистического сотрудника, итоговая сумма получилась чуть больше 68 тыс долларов в год, что примерно в 1447 раз меньше зарплаты Кука.",
                  image: "006",
                  likes: 5744,
@@ -108,16 +96,17 @@ class ProfileViewController: UIViewController {
     }
     
     @objc private func tap(gesture: UITapGestureRecognizer) {
-        profileHeaderView.statusTextField.resignFirstResponder()
+        ProfileHeaderView().statusTextField.resignFirstResponder()
     }
     
 }
 
 extension ProfileViewController: ProfileHeaderViewProtocol {
-    
+
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void) {
-        self.heightConstraint?.constant = textFieldIsVisible ? 220 : 170
-        
+
+        heightHeaderInSection = textFieldIsVisible ? 220 : 170
+
         UIView.animate(withDuration: 0.3, delay: 0.0) {
             self.view.layoutIfNeeded()
         } completion: { _ in
@@ -150,15 +139,40 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return profileHeaderView
+        guard section == 0 else { return nil }
+        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header") as? ProfileHeaderView
+        view?.delegate = self
+        return view
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        220
         
-//        return self.heightConstraint?.constant == 220 ? 220 : 170
+
+////        profileHeaderView.heightAnchor.constraint(equalToConstant: 170)
+//        var heightHeaderInSection = section
+////        heightHeaderInSection = 100
+//
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
+//        var h = tableView.estimatedSectionHeaderHeight
+//        h = 600
+//
+//
+//        let view = ProfileHeaderView()
+//        let HView = view.heightAnchor.constraint(equalToConstant: 170).isActive
+        
+        
+        return heightHeaderInSection
+//        return section == 0 ? 220 : 0
+//        return h
+//        return tableView.sectionHeaderHeight = 300
+        //  return heightHeaderInSection
 
     }
+    
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 300
+//    }
 }
 
 
