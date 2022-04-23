@@ -113,10 +113,8 @@ class PostTableViewCell: UITableViewCell {
         contentView.addSubview(self.backView)
 
         self.backView.addSubview(self.authorLabel)
-//        self.postStackView.addArrangedSubview(self.authorLabel)
         self.backView.addSubview(self.pictureView)
         self.backView.addSubview(self.postStackView)
-//        self.postStackView.addArrangedSubview(self.pictureView)
         self.postStackView.addArrangedSubview(self.descriptionLabel)
         self.postStackView.addArrangedSubview(self.likesAndViewsStackView)
         self.likesAndViewsStackView.addArrangedSubview(self.likesLabel)

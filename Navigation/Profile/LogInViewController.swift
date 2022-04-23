@@ -92,10 +92,12 @@ class LogInViewController: UIViewController {
         super.viewDidLoad()
         self.setupViews()
         self.setupConstraints()
-        
-        let tapGesture = UITapGestureRecognizer(target: self,
-                                                action: #selector(self.tap(gesture:)))
-        self.view.addGestureRecognizer(tapGesture)
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+
+//        navigationController?.setNavigationBarHidden(true, animated: true)
+//        let tapGesture = UITapGestureRecognizer(target: self,
+//                                                action: #selector(self.tap(gesture:)))
+//        self.view.addGestureRecognizer(tapGesture)
         
         self.displayButton.addTarget(self,
                                      action: #selector(performDisplayVC(parameterSender:)),
@@ -104,6 +106,8 @@ class LogInViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
+        self.navigationItem.backButtonTitle = "Назад"
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(kbdShow), name:
                         UIResponder.keyboardWillShowNotification, object: nil)
@@ -182,10 +186,10 @@ class LogInViewController: UIViewController {
         scrollView.scrollIndicatorInsets = scrollView.contentInset
     }
     
-    @objc private func tap(gesture: UITapGestureRecognizer) {
-        self.loginTextField.resignFirstResponder()
-        self.passwordTextField.resignFirstResponder()
-    }
+//    @objc private func tap(gesture: UITapGestureRecognizer) {
+//        self.loginTextField.resignFirstResponder()
+//        self.passwordTextField.resignFirstResponder()
+//    }
     
     @objc func performDisplayVC(parameterSender: Any) {
         let profileViewController = ProfileViewController()

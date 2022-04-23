@@ -12,17 +12,14 @@ class ProfileViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.rowHeight = UITableView.automaticDimension
-//        tableView.estimatedSectionHeaderHeight = UITableView.automaticDimension
-//        tableView.sectionHeaderHeight = 170
         tableView.estimatedRowHeight = 44
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DefaultCell")
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "ArticleCell")
-        
-        tableView.register(ProfileHeaderView.self, forHeaderFooterViewReuseIdentifier: "header")
-        
+        tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: "PhotosCell")
+        tableView.register(ProfileHeaderView.self, forHeaderFooterViewReuseIdentifier: "Header")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .systemGray6
         return tableView
@@ -35,10 +32,16 @@ class ProfileViewController: UIViewController {
         self.setupNavigationBar()
         self.setupView()
         self.loadDataSource()
-        let tapGesture = UITapGestureRecognizer(target: self,
-                                                action: #selector(self.tap(gesture:)))
-        self.view.addGestureRecognizer(tapGesture)
+        
+//        let tapGesture = UITapGestureRecognizer(target: self,
+//                                                action: #selector(self.tap(gesture:)))
+//        self.view.addGestureRecognizer(tapGesture)
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = false
     }
     
     private func setupNavigationBar() {
@@ -95,10 +98,9 @@ class ProfileViewController: UIViewController {
                  views: 6580))
     }
     
-    @objc private func tap(gesture: UITapGestureRecognizer) {
-        ProfileHeaderView().statusTextField.resignFirstResponder()
-    }
-    
+//    @objc private func tap(gesture: UITapGestureRecognizer) {
+//        ProfileHeaderView().statusTextField.resignFirstResponder()
+//    }
 }
 
 extension ProfileViewController: ProfileHeaderViewProtocol {
@@ -106,73 +108,70 @@ extension ProfileViewController: ProfileHeaderViewProtocol {
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void) {
 
         heightHeaderInSection = textFieldIsVisible ? 220 : 170
-
+        self.tableView.beginUpdates()
         UIView.animate(withDuration: 0.3, delay: 0.0) {
             self.view.layoutIfNeeded()
         } completion: { _ in
             completion()
         }
+        self.tableView.endUpdates()
     }
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.count
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
     }
-
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        section == 0 ? 1 : dataSource.count
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleCell",
-                                                       for: indexPath) as? PostTableViewCell else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
+        if indexPath.section == 0 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "PhotosCell",
+                                                           for: indexPath) as? PhotosTableViewCell else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
+                return cell
+            }
+            return cell
+        } else {
+            
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleCell",
+                                                           for: indexPath) as? PostTableViewCell else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
+                return cell
+            }
+            let article = dataSource[indexPath.row]
+            let viewModel = PostTableViewCell.ViewModel(author: article.author,
+                                                        description: article.description,
+                                                        image: article.image,
+                                                        likes: article.likes,
+                                                        views: article.views)
+            cell.setup(with: viewModel)
             return cell
         }
-        
-        let article = dataSource[indexPath.row]
-        let viewModel = PostTableViewCell.ViewModel(author: article.author,
-                                                    description: article.description,
-                                                    image: article.image,
-                                                    likes: article.likes,
-                                                    views: article.views)
-        cell.setup(with: viewModel)
-        return cell
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == 0 else { return nil }
-        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header") as? ProfileHeaderView
+        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "Header") as? ProfileHeaderView
         view?.delegate = self
         return view
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-
-////        profileHeaderView.heightAnchor.constraint(equalToConstant: 170)
-//        var heightHeaderInSection = section
-////        heightHeaderInSection = 100
-//
-        self.tableView.beginUpdates()
-        self.tableView.endUpdates()
-//        var h = tableView.estimatedSectionHeaderHeight
-//        h = 600
-//
-//
-//        let view = ProfileHeaderView()
-//        let HView = view.heightAnchor.constraint(equalToConstant: 170).isActive
-        
-        
-        return heightHeaderInSection
-//        return section == 0 ? 220 : 0
-//        return h
-//        return tableView.sectionHeaderHeight = 300
-        //  return heightHeaderInSection
-
+        section == 0 ? heightHeaderInSection : 0
     }
-    
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 300
-//    }
+     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            let PhotoVC = PhotosViewController()
+            navigationController?.pushViewController(PhotoVC, animated: true)
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
+    }
 }
 
 

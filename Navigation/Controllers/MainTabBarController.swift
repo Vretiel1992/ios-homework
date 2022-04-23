@@ -8,8 +8,6 @@
 import UIKit
 
 class MainTabBarController: UITabBarController {
-
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,16 +24,14 @@ class MainTabBarController: UITabBarController {
         
         let logInViewController = createNavController(vc: LogInViewController(), itemName: "Профиль", itemImage: "person.circle")
         
-        logInViewController.navigationBar.isHidden = true
-        
         viewControllers = [feedViewController, logInViewController]
     }
     
     private func createNavController(vc: UIViewController, itemName: String, itemImage: String) -> UINavigationController {
         let item = UITabBarItem(title: itemName, image: UIImage(systemName: itemImage), tag: 0)
         let navController = UINavigationController(rootViewController: vc)
-        navController.navigationBar.prefersLargeTitles = true
         navController.tabBarItem = item
+        navController.navigationBar.prefersLargeTitles = true
         return navController
     }
 }

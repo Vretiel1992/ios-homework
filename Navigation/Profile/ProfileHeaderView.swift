@@ -113,7 +113,6 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     }
     
     private func setupView() {
-        self.backgroundColor = .blue
         self.addSubview(self.infoStackView)
         self.addSubview(self.setStatusButton)
         self.addSubview(self.statusTextField)
