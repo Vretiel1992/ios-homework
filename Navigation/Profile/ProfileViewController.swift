@@ -12,8 +12,6 @@ class ProfileViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.rowHeight = UITableView.automaticDimension
-//        tableView.estimatedSectionHeaderHeight = UITableView.automaticDimension
-//        tableView.sectionHeaderHeight = 170
         tableView.estimatedRowHeight = 44
         tableView.dataSource = self
         tableView.delegate = self
@@ -106,12 +104,13 @@ extension ProfileViewController: ProfileHeaderViewProtocol {
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void) {
 
         heightHeaderInSection = textFieldIsVisible ? 220 : 170
-
+        self.tableView.beginUpdates()
         UIView.animate(withDuration: 0.3, delay: 0.0) {
             self.view.layoutIfNeeded()
         } completion: { _ in
             completion()
         }
+        self.tableView.endUpdates()
     }
 }
 
@@ -146,33 +145,8 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-
-////        profileHeaderView.heightAnchor.constraint(equalToConstant: 170)
-//        var heightHeaderInSection = section
-////        heightHeaderInSection = 100
-//
-        self.tableView.beginUpdates()
-        self.tableView.endUpdates()
-//        var h = tableView.estimatedSectionHeaderHeight
-//        h = 600
-//
-//
-//        let view = ProfileHeaderView()
-//        let HView = view.heightAnchor.constraint(equalToConstant: 170).isActive
-        
-        
-        return heightHeaderInSection
-//        return section == 0 ? 220 : 0
-//        return h
-//        return tableView.sectionHeaderHeight = 300
-        //  return heightHeaderInSection
-
+        section == 0 ? heightHeaderInSection : 0
     }
-    
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 300
-//    }
 }
 
 
