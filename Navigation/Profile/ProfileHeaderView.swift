@@ -15,6 +15,8 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     
     private var statusText: String = "Установите статус..."
     
+    let tapGestureRecognizer = UITapGestureRecognizer()
+    
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         let profileImage = UIImage(named: "TimCook")
@@ -25,6 +27,9 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGestureRecognizer)
+        tapGestureRecognizer.addTarget(self, action: #selector(handleTap(_:)))
         return imageView
     }()
     
@@ -97,16 +102,12 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     private var buttonTopConstraint: NSLayoutConstraint?
     
     weak var delegate: ProfileHeaderViewProtocol?
+    weak var delegate2: ProfileImageIncreasable?
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         self.setupView()
     }
-    
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        self.setupView()
-//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -175,6 +176,12 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         }
     }
     
+    @objc func handleTap(_ gestureRecognizer:UITapGestureRecognizer){
+        guard tapGestureRecognizer === gestureRecognizer else { return }
+        self.delegate2?.resizeProfileImage()
+
+    }
+    
     @objc func statusTextChanged(parameterSender: Any) {
         self.statusText = "\(self.statusTextField.text!)"
     }
@@ -212,4 +219,5 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     }
     
 }
+
 
