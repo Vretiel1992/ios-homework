@@ -20,11 +20,10 @@ class MainTabBarController: UITabBarController {
     }
     
     private func setupTabBar() {
-        let feedViewController = createNavController(vc: FeedViewController(), itemName: "Лента", itemImage: "house")
-        
         let logInViewController = createNavController(vc: LogInViewController(), itemName: "Профиль", itemImage: "person.circle")
         
-        viewControllers = [feedViewController, logInViewController]
+        let feedViewController = createNavController(vc: FeedViewController(), itemName: "Лента", itemImage: "house")
+        viewControllers = [logInViewController, feedViewController]
     }
     
     private func createNavController(vc: UIViewController, itemName: String, itemImage: String) -> UINavigationController {

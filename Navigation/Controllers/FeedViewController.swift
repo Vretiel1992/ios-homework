@@ -11,33 +11,14 @@ class FeedViewController: UIViewController {
     
     var post = PostTitlePostVC(title: "Мой пост")
     
-    private lazy var displayButton1: UIButton = {
+    private lazy var displayButton: UIButton = {
         let button = UIButton()
         button.setTitle("Перейти на пост", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemYellow
+        button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 12
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
-    
-    private lazy var displayButton2: UIButton = {
-        let button = UIButton()
-        button.setTitle("Перейти на пост", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemYellow
-        button.layer.cornerRadius = 12
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private lazy var centerStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.distribution = .fillEqually
-        stackView.spacing = 10
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
     }()
     
     override func viewDidLoad() {
@@ -51,15 +32,8 @@ class FeedViewController: UIViewController {
         self.view.backgroundColor = .white
         self.title = "Лента"
         self.navigationItem.backButtonTitle = ""
-        self.view.addSubview(self.centerStackView)
-        self.view.addSubview(self.displayButton1)
-        self.view.addSubview(self.displayButton2)
-        self.centerStackView.addArrangedSubview(displayButton1)
-        self.centerStackView.addArrangedSubview(displayButton2)
-        self.displayButton1.addTarget(self,
-                                      action: #selector(performDisplayVC(parameterSender:)),
-                                      for: .touchUpInside)
-        self.displayButton2.addTarget(self,
+        self.view.addSubview(self.displayButton)
+        self.displayButton.addTarget(self,
                                       action: #selector(performDisplayVC(parameterSender:)),
                                       for: .touchUpInside)
     }
@@ -72,11 +46,11 @@ class FeedViewController: UIViewController {
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            self.centerStackView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            self.centerStackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-            self.centerStackView.heightAnchor.constraint(equalToConstant: 110),
-            self.centerStackView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            self.centerStackView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            self.displayButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            self.displayButton.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            self.displayButton.heightAnchor.constraint(equalToConstant: 50),
+            self.displayButton.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            self.displayButton.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
 }

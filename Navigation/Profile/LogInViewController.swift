@@ -92,12 +92,10 @@ class LogInViewController: UIViewController {
         super.viewDidLoad()
         self.setupViews()
         self.setupConstraints()
-        self.navigationController?.navigationBar.prefersLargeTitles = false
-
-//        navigationController?.setNavigationBarHidden(true, animated: true)
-//        let tapGesture = UITapGestureRecognizer(target: self,
-//                                                action: #selector(self.tap(gesture:)))
-//        self.view.addGestureRecognizer(tapGesture)
+        
+        let tapGesture = UITapGestureRecognizer(target: self,
+                                                action: #selector(self.tap(gesture:)))
+        self.view.addGestureRecognizer(tapGesture)
         
         self.displayButton.addTarget(self,
                                      action: #selector(performDisplayVC(parameterSender:)),
@@ -107,7 +105,7 @@ class LogInViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
-        self.navigationItem.backButtonTitle = "Назад"
+        self.navigationController?.navigationBar.prefersLargeTitles = false
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(kbdShow), name:
                         UIResponder.keyboardWillShowNotification, object: nil)
@@ -173,11 +171,21 @@ class LogInViewController: UIViewController {
         guard let keyboardFrameValue = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue) else { return }
         let keyboardFrame = self.view.convert(keyboardFrameValue.cgRectValue, from: nil)
         if UIDevice.current.orientation.isLandscape {
-            scrollView.contentInset.bottom = keyboardFrame.size.height + 20
-            scrollView.scrollIndicatorInsets = scrollView.contentInset
+            if self.loginTextField.isFirstResponder {
+                scrollView.contentInset.bottom = keyboardFrame.size.height + 20
+                scrollView.scrollIndicatorInsets = scrollView.contentInset
+            } else if self.passwordTextField.isFirstResponder {
+                scrollView.contentInset.bottom = keyboardFrame.size.height
+                scrollView.scrollIndicatorInsets = scrollView.contentInset
+            }
         } else {
-            scrollView.contentInset.bottom = keyboardFrame.size.height + 80
-            scrollView.scrollIndicatorInsets = scrollView.contentInset
+            if self.loginTextField.isFirstResponder {
+                scrollView.contentInset.bottom = keyboardFrame.size.height + 110
+                scrollView.scrollIndicatorInsets = scrollView.contentInset
+            } else if self.passwordTextField.isFirstResponder {
+                scrollView.contentInset.bottom = keyboardFrame.size.height + 60
+                scrollView.scrollIndicatorInsets = scrollView.contentInset
+            }
         }
     }
     
@@ -186,10 +194,10 @@ class LogInViewController: UIViewController {
         scrollView.scrollIndicatorInsets = scrollView.contentInset
     }
     
-//    @objc private func tap(gesture: UITapGestureRecognizer) {
-//        self.loginTextField.resignFirstResponder()
-//        self.passwordTextField.resignFirstResponder()
-//    }
+    @objc private func tap(gesture: UITapGestureRecognizer) {
+        self.loginTextField.resignFirstResponder()
+        self.passwordTextField.resignFirstResponder()
+    }
     
     @objc func performDisplayVC(parameterSender: Any) {
         let profileViewController = ProfileViewController()

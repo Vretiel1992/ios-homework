@@ -9,6 +9,7 @@ import UIKit
 
 protocol ProfileHeaderViewProtocol: AnyObject {
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void)
+    func resizeProfileImage()
 }
 
 class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
@@ -102,7 +103,6 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     private var buttonTopConstraint: NSLayoutConstraint?
     
     weak var delegate: ProfileHeaderViewProtocol?
-    weak var delegate2: ProfileImageIncreasable?
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -178,8 +178,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     
     @objc func handleTap(_ gestureRecognizer:UITapGestureRecognizer){
         guard tapGestureRecognizer === gestureRecognizer else { return }
-        self.delegate2?.resizeProfileImage()
-
+        self.delegate?.resizeProfileImage()
     }
     
     @objc func statusTextChanged(parameterSender: Any) {
@@ -219,5 +218,6 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     }
     
 }
+
 
 

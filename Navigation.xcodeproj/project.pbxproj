@@ -93,6 +93,7 @@
 		E45F43DB27D669D80012D112 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				E4DBF92E2812BA5B006812AD /* PhotosViewController.swift */,
 				E488891027C28C4D005105C6 /* MainTabBarController.swift */,
 				E45F43DD27D677E60012D112 /* FeedViewController.swift */,
 				E453CACF27D79AF5000E78AC /* PostViewController.swift */,
@@ -148,7 +149,6 @@
 				E4A3F0B027DF78C1002CA9D0 /* ProfileHeaderView.swift */,
 				E45F43DF27D678010012D112 /* ProfileViewController.swift */,
 				E48C718327F5EE5C00C6E973 /* LogInViewController.swift */,
-				E4DBF92E2812BA5B006812AD /* PhotosViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
