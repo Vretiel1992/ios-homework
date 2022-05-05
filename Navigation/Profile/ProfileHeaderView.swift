@@ -9,11 +9,14 @@ import UIKit
 
 protocol ProfileHeaderViewProtocol: AnyObject {
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void)
+    func resizeProfileImage()
 }
 
-class ProfileHeaderView: UIView, UITextFieldDelegate {
+class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     
     private var statusText: String = "Установите статус..."
+    
+    let tapGestureRecognizer = UITapGestureRecognizer()
     
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -25,6 +28,9 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 3.0
         imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGestureRecognizer)
+        tapGestureRecognizer.addTarget(self, action: #selector(handleTap(_:)))
         return imageView
     }()
     
@@ -61,7 +67,7 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         return label
     }()
     
-    private lazy var statusTextField: UITextField = {
+    lazy var statusTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -98,8 +104,8 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     
     weak var delegate: ProfileHeaderViewProtocol?
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
         self.setupView()
     }
     
@@ -108,10 +114,10 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
     }
     
     private func setupView() {
-        
         self.addSubview(self.infoStackView)
         self.addSubview(self.setStatusButton)
         self.addSubview(self.statusTextField)
+        self.addSubview(self.labelsStackView)
         self.infoStackView.addArrangedSubview(self.avatarImageView)
         self.infoStackView.addArrangedSubview(self.labelsStackView)
         self.labelsStackView.addArrangedSubview(self.fullNameLabel)
@@ -170,6 +176,11 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         }
     }
     
+    @objc func handleTap(_ gestureRecognizer:UITapGestureRecognizer){
+        guard tapGestureRecognizer === gestureRecognizer else { return }
+        self.delegate?.resizeProfileImage()
+    }
+    
     @objc func statusTextChanged(parameterSender: Any) {
         self.statusText = "\(self.statusTextField.text!)"
     }
@@ -205,5 +216,8 @@ class ProfileHeaderView: UIView, UITextFieldDelegate {
         self.statusTextField.resignFirstResponder()
         return true
     }
+    
 }
+
+
 
