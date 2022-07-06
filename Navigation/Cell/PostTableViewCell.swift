@@ -7,16 +7,47 @@
 
 import UIKit
 
-class PostTableViewCell: UITableViewCell {
+protocol PostTableViewCellProtocol: AnyObject {
+    func didTapDescriptionTextView(cell: PostTableViewCell)
+    func didTapLikeButton(cell: PostTableViewCell, completion: @escaping () -> Void)
+    func didTapPictureImageView(imageCell: UIImage)
+}
+
+class PostTableViewCell: UITableViewCell, UITextViewDelegate {
     
     struct ViewModel: ViewModelProtocol {
         let author, description, image: String
         var likes, views: Int
     }
     
-    private lazy var backView: UIView = {
+    var likeButtonTag = 0
+    var isExpandedCell = false
+    var isSelectedLike = false
+    var fullTextTextView = ""
+    
+    let tapGestureDescriptionTextView = UITapGestureRecognizer()
+    let tapGesturePictureImageView = UITapGestureRecognizer()
+    
+    lazy var separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    lazy var borderView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray4
+        view.layer.cornerRadius = 15
+        view.clipsToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    lazy var backView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
+        view.layer.cornerRadius = 15
         view.clipsToBounds = true
         view.layer.maskedCorners = [
             .layerMinXMaxYCorner,
@@ -26,6 +57,24 @@ class PostTableViewCell: UITableViewCell {
         ]
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+     lazy var likesButton: UIButton = {
+        let button = UIButton()
+        var config = UIButton.Configuration.gray()
+        config.cornerStyle = .capsule
+        config.image = UIImage(systemName: "suit.heart",
+                               withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0,
+                                                                              weight: .bold,
+                                                                              scale: .large))
+        config.imagePadding = 5
+        config.buttonSize = .mini
+        
+        config.baseForegroundColor = .darkGray
+        button.configuration = config
+        button.addTarget(self, action: #selector(tapLikeButton(parameterSender:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private lazy var authorLabel: UILabel = {
@@ -38,42 +87,50 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
     
-    private lazy var descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .systemGray
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    lazy var descriptionTextView: UITextView = {
+        let textView = UITextView()
+        textView.textAlignment = .left
+        textView.textContainerInset = .zero
+        textView.isScrollEnabled = false
+        textView.isEditable = false
+        textView.isSelectable = false
+        textView.dataDetectorTypes = .link
+        textView.textContainer.lineBreakMode = .byTruncatingTail
+        textView.showsHorizontalScrollIndicator = false
+        textView.showsVerticalScrollIndicator = false
+        textView.delegate = self
+        textView.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        textView.isUserInteractionEnabled = true
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        return textView
     }()
     
     private lazy var pictureView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .black
+        imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private lazy var likesLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var viewsLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
+    private lazy var viewsButtonOff: UIButton = {
+        let button = UIButton()
+        var config = UIButton.Configuration.plain()
+        config.cornerStyle = .capsule
+        config.image = UIImage(systemName: "eye.fill",
+                               withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0,
+                                                                              weight: .bold,
+                                                                              scale: .large))
+        config.imagePadding = 5
+        config.buttonSize = .mini
+        config.baseForegroundColor = .gray
+        button.configuration = config
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private lazy var postStackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.backgroundColor = .white
         stackView.axis = .vertical
         stackView.spacing = 16
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,16 +140,18 @@ class PostTableViewCell: UITableViewCell {
     private lazy var likesAndViewsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 1
+        stackView.distribution = .equalCentering
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
+    weak var delegate: PostTableViewCellProtocol?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.setupView()
         self.setupConstraints()
+        self.setupGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -103,44 +162,113 @@ class PostTableViewCell: UITableViewCell {
         super.prepareForReuse()
         self.authorLabel.text = nil
         self.pictureView.image = nil
-        self.descriptionLabel.text = nil
-        self.likesLabel.text = nil
-        self.viewsLabel.text = nil
+        self.descriptionTextView.text = nil
+        self.likesButton.configuration?.title = nil
+        self.viewsButtonOff.configuration?.title = nil
+        isExpandedCell = false
+        isSelectedLike = false
+        self.likesButton.configuration?.baseBackgroundColor = .systemGray5
+        self.likesButton.configuration?.baseForegroundColor = .darkGray
+        self.likesButton.configuration?.image = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0, weight: .bold, scale: .large))
     }
     
     private func setupView() {
-        contentView.backgroundColor = .white
-        contentView.addSubview(self.backView)
-
+        self.selectionStyle = .none
+        self.backgroundColor = .systemGray5
+        contentView.addSubview(self.separatorView)
+        contentView.addSubview(self.borderView)
+        self.borderView.addSubview(self.backView)
         self.backView.addSubview(self.authorLabel)
         self.backView.addSubview(self.pictureView)
         self.backView.addSubview(self.postStackView)
-        self.postStackView.addArrangedSubview(self.descriptionLabel)
+        self.postStackView.addArrangedSubview(self.descriptionTextView)
         self.postStackView.addArrangedSubview(self.likesAndViewsStackView)
-        self.likesAndViewsStackView.addArrangedSubview(self.likesLabel)
-        self.likesAndViewsStackView.addArrangedSubview(self.viewsLabel)
+        self.likesAndViewsStackView.addArrangedSubview(self.likesButton)
+        self.likesAndViewsStackView.addArrangedSubview(self.viewsButtonOff)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            self.backView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            self.backView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            self.backView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            self.backView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-        
-            self.authorLabel.topAnchor.constraint(equalTo: self.backView.topAnchor, constant: 16),
-            self.authorLabel.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 16),
-            self.authorLabel.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -16),
+            self.separatorView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            self.separatorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            self.separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            self.separatorView.heightAnchor.constraint(equalToConstant: 10),
             
-            self.pictureView.topAnchor.constraint(equalTo: self.authorLabel.bottomAnchor, constant: 16),
+            self.borderView.topAnchor.constraint(equalTo: self.separatorView.bottomAnchor),
+            self.borderView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            self.borderView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            self.borderView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            self.backView.topAnchor.constraint(equalTo: self.borderView.topAnchor, constant: 2.0),
+            self.backView.leadingAnchor.constraint(equalTo: self.borderView.leadingAnchor),
+            self.backView.trailingAnchor.constraint(equalTo: self.borderView.trailingAnchor),
+            self.backView.bottomAnchor.constraint(equalTo: self.borderView.bottomAnchor, constant: -2.0),
+            
+            self.authorLabel.topAnchor.constraint(equalTo: self.backView.topAnchor, constant: 8),
+            self.authorLabel.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 8),
+            self.authorLabel.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -8),
+            
+            self.pictureView.topAnchor.constraint(equalTo: self.authorLabel.bottomAnchor, constant: 8),
             self.pictureView.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor),
             self.pictureView.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor),
             
-            self.postStackView.topAnchor.constraint(equalTo: self.pictureView.bottomAnchor, constant: 16),
-            self.postStackView.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 16),
-            self.postStackView.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -16),
-            self.postStackView.bottomAnchor.constraint(equalTo: self.backView.bottomAnchor, constant: -16)
+            self.postStackView.topAnchor.constraint(equalTo: self.pictureView.bottomAnchor, constant: 8),
+            self.postStackView.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 8),
+            self.postStackView.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -8),
+            self.postStackView.bottomAnchor.constraint(equalTo: self.backView.bottomAnchor, constant: -12)
         ])
+    }
+    
+    private func setupGesture() {
+        tapGestureDescriptionTextView.numberOfTapsRequired = 1
+        descriptionTextView.addGestureRecognizer(tapGestureDescriptionTextView)
+        tapGestureDescriptionTextView.addTarget(self, action: #selector(handleTapGestureDescription(_:)))
+        tapGesturePictureImageView.numberOfTapsRequired = 1
+        pictureView.addGestureRecognizer(tapGesturePictureImageView)
+        tapGesturePictureImageView.addTarget(self, action: #selector(handleTapGesturePicture(_:)))
+    }
+    
+    private func setupCutTextView() {
+        if descriptionTextView.text.count >= 160 {
+            self.fullTextTextView = descriptionTextView.text!
+            var changedText =  (descriptionTextView.text! as NSString).substring(with: NSRange(location: 0, length: 160))
+            changedText += "... Еще "
+            descriptionTextView.text = changedText
+            let attributes: [NSAttributedString.Key: NSObject] = [
+                .foregroundColor: UIColor.black,
+                .font: UIFont.systemFont(ofSize: 14.0),
+            ]
+            let attributedString = NSMutableAttributedString(string: changedText, attributes: attributes)
+            attributedString.addAttribute(.link, value: "", range: NSRange(location: 160, length: 7))
+            descriptionTextView.attributedText = attributedString
+        }
+    }
+    
+    @objc private func handleTapGestureDescription(_ gestureRecognizer: UITapGestureRecognizer) {
+        guard tapGestureDescriptionTextView === gestureRecognizer else { return }
+        self.delegate?.didTapDescriptionTextView(cell: self)
+    }
+
+    @objc private func tapLikeButton(parameterSender: Any) {
+        self.delegate?.didTapLikeButton(cell: self) { [weak self] in
+            self?.isSelectedLike.toggle()
+        }
+    }
+    
+    @objc private func handleTapGesturePicture(_ gestureRecognizer: UITapGestureRecognizer) {
+        guard tapGesturePictureImageView === gestureRecognizer else { return }
+        self.delegate?.didTapPictureImageView(imageCell: pictureView.image!)
+    }
+    
+    func clickedLikeSelectedCell() {
+        self.likesButton.configuration?.baseBackgroundColor = #colorLiteral(red: 0.9886392951, green: 0.9445171952, blue: 0.9435593486, alpha: 1)
+        self.likesButton.configuration?.baseForegroundColor = .red
+        self.likesButton.configuration?.title = "\(Int((self.likesButton.configuration?.title)!)! + 1)"
+        self.likesButton.configuration?.image = UIImage(systemName: "heart.fill",
+                                                        withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0,
+                                                                                                       weight: .bold,
+                                                                                                       scale: .large))
+        self.isSelectedLike = true
     }
 }
 
@@ -149,8 +277,18 @@ extension PostTableViewCell: Setupable {
         guard let viewModel = viewModel as? ViewModel else { return }
         self.authorLabel.text = viewModel.author
         self.pictureView.image = UIImage(named: viewModel.image)
-        self.descriptionLabel.text = viewModel.description
-        self.likesLabel.text = "Лайков: \(viewModel.likes)"
-        self.viewsLabel.text = "Просмотров: \(viewModel.views)"
+        self.likesButton.configuration?.title = "\(viewModel.likes)"
+        self.viewsButtonOff.configuration?.title = "\(viewModel.views)"
+        self.descriptionTextView.text = viewModel.description
+        setupCutTextView()
+    }
+}
+
+extension UITapGestureRecognizer {
+    func didTapAttributedTextInTextView(textView: UITextView, inRange targetRange: NSRange) -> Bool {
+        let layoutManager = textView.layoutManager
+        let locationOfTouch = self.location(in: textView)
+        let index = layoutManager.characterIndex(for: locationOfTouch, in: textView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+        return NSLocationInRange(index, targetRange)
     }
 }

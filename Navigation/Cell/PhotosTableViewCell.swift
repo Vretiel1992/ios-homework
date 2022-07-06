@@ -11,7 +11,6 @@ class PhotosTableViewCell: UITableViewCell {
     
     private lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
         view.clipsToBounds = true
         view.layer.maskedCorners = [
             .layerMinXMaxYCorner,
@@ -43,7 +42,7 @@ class PhotosTableViewCell: UITableViewCell {
     
     private lazy var pictureViewOne: UIImageView = {
         let imageView = UIImageView()
-        let image = UIImage(named: "01")
+        let image = UIImage(named: "1")
         imageView.image = image
         imageView.layer.cornerRadius = 6
         imageView.clipsToBounds = true
@@ -54,7 +53,7 @@ class PhotosTableViewCell: UITableViewCell {
     
     private lazy var pictureViewTwo: UIImageView = {
         let imageView = UIImageView()
-        let image = UIImage(named: "02")
+        let image = UIImage(named: "2")
         imageView.image = image
         imageView.layer.cornerRadius = 6
         imageView.clipsToBounds = true
@@ -65,7 +64,7 @@ class PhotosTableViewCell: UITableViewCell {
     
     private lazy var pictureViewThree: UIImageView = {
         let imageView = UIImageView()
-        let image = UIImage(named: "03")
+        let image = UIImage(named: "3")
         imageView.image = image
         imageView.layer.cornerRadius = 6
         imageView.clipsToBounds = true
@@ -98,16 +97,28 @@ class PhotosTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.setupView()
         self.setupConstraints()
+
+    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let thickness = 2.0
+        let borderTopPhotoCell = CALayer()
+        borderTopPhotoCell.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.width, height: thickness)
+        borderTopPhotoCell.backgroundColor = UIColor.systemGray3.cgColor
+        self.contentView.layer.addSublayer(borderTopPhotoCell)
+        let borderBotPhotoCell = CALayer()
+        borderBotPhotoCell.frame = CGRect(x: 0.0, y: self.frame.height - 2.0, width: UIScreen.main.bounds.width, height: thickness)
+        borderBotPhotoCell.backgroundColor = UIColor.systemGray3.cgColor
+        self.contentView.layer.addSublayer(borderBotPhotoCell)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupView() {
-        contentView.backgroundColor = .white
+        self.selectionStyle = .none
         contentView.addSubview(self.backView)
-        
         self.backView.addSubview(photoLabel)
         self.backView.addSubview(arrowImageView)
         self.backView.addSubview(imagesStackView)
@@ -115,6 +126,8 @@ class PhotosTableViewCell: UITableViewCell {
         self.imagesStackView.addArrangedSubview(pictureViewTwo)
         self.imagesStackView.addArrangedSubview(pictureViewThree)
         self.imagesStackView.addArrangedSubview(pictureViewFour)
+        
+
     }
     
     private func setupConstraints() {

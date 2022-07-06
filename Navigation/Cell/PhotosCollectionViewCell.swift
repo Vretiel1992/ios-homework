@@ -11,6 +11,7 @@ class PhotosCollectionViewCell: UICollectionViewCell {
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 6
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -35,7 +36,7 @@ class PhotosCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func setImage(name: String) {
-        self.imageView.image = UIImage(named: name)
+    func setImage(name: UIImage) {
+        self.imageView.image = name
     }
 }

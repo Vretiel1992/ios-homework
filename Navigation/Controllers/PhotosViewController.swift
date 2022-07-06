@@ -21,12 +21,14 @@ class PhotosViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.layout)
         collectionView.backgroundColor = .systemGray6
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "DefaultCell")
-        collectionView.register(PhotosCollectionViewCell.self, forCellWithReuseIdentifier: "PhotosCVCell")
+        collectionView.register(PhotosCollectionViewCell.self, forCellWithReuseIdentifier: "PhotosVCCell")
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
+    
+    let photoGallery = PhotoGallery()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +36,6 @@ class PhotosViewController: UIViewController {
         self.setupNavigationBar()
         self.setupView()
         self.setupConstraints()
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,7 +49,6 @@ class PhotosViewController: UIViewController {
     
     private func setupView() {
         self.view.addSubview(collectionView)
-        
     }
     
     private func setupConstraints() {
@@ -58,27 +58,20 @@ class PhotosViewController: UIViewController {
             self.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             self.collectionView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
-
     }
 }
 
 extension PhotosViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return photoGallery.images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosCVCell", for: indexPath) as? PhotosCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosVCCell", for: indexPath) as? PhotosCollectionViewCell else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DefaultCell", for: indexPath)
-            cell.backgroundColor = .red
             return cell
         }
-        cell.backgroundColor = .yellow
-        let photos: [String] = [
-            "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
-            "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"
-        ]
-        cell.setImage(name: photos[indexPath.item])
+        cell.setImage(name: photoGallery.images[indexPath.item])
         return cell
     }
     
@@ -87,8 +80,15 @@ extension PhotosViewController: UICollectionViewDataSource, UICollectionViewDele
         return CGSize(width: widthAndHeight, height: widthAndHeight)
         
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vc = FullScreenPhotoViewController()
+        vc.photoGallery = photoGallery
+        vc.indexPath = indexPath
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }

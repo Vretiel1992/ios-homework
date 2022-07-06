@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Setupable.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 11.04.2022.

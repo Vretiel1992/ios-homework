@@ -23,7 +23,6 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         let profileImage = UIImage(named: "TimCook")
         imageView.image = profileImage
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.frame.size = CGSize(width: 120, height: 120)
         imageView.layer.cornerRadius = 50
         imageView.clipsToBounds = true
         imageView.layer.borderWidth = 3.0
@@ -55,6 +54,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         label.text = "Тим Кук"
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         label.textColor = .black
+        
         return label
     }()
     
@@ -63,11 +63,11 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Установите статус..."
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .gray
+        label.textColor = .darkGray
         return label
     }()
     
-    lazy var statusTextField: UITextField = {
+    private lazy var statusTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
@@ -75,7 +75,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         textField.backgroundColor = .white
         textField.textAlignment = .center
         textField.clearButtonMode = .always
-        textField.placeholder = "введите текст"
+        textField.placeholder = "Введите текст"
         textField.layer.cornerRadius = 12
         textField.layer.borderWidth = 1.0
         textField.layer.borderColor = UIColor.black.cgColor
@@ -137,7 +137,6 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         if self.statusTextField.isHidden {
             self.addSubview(self.statusTextField)
             statusTextField.delegate = self
-            
             self.buttonTopConstraint?.isActive = false
             
             let topConstraint = self.statusTextField.topAnchor.constraint(equalTo: self.infoStackView.bottomAnchor, constant: 10)
@@ -156,7 +155,9 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
             
             self.setStatusButton.setTitle("Применить статус", for: .normal)
         } else {
-            self.statusLabel.text = self.statusText
+            if !self.statusText.isEmpty {
+                self.statusLabel.text = self.statusText.trimmingCharacters(in: .whitespaces)
+            }
             self.statusTextField.text = nil
             
             self.buttonTopConstraint?.isActive = false
@@ -196,7 +197,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         self.buttonTopConstraint?.priority = UILayoutPriority(rawValue: 999)
         let leadingButtonConstraint = self.setStatusButton.leadingAnchor.constraint(equalTo: self.infoStackView.leadingAnchor)
         let trailingButtonConstraint = self.setStatusButton.trailingAnchor.constraint(equalTo: self.infoStackView.trailingAnchor)
-        let bottomButtonConstraint = self.setStatusButton.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        let bottomButtonConstraint = self.setStatusButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10)
         let heightButtonConstraint = self.setStatusButton.heightAnchor.constraint(equalToConstant: 50)
         
         NSLayoutConstraint.activate([
@@ -218,6 +219,3 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     }
     
 }
-
-
-

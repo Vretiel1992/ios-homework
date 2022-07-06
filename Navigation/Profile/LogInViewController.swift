@@ -50,7 +50,7 @@ class LogInViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.indent(size: 10)
         textField.tintColor = appMyColor
-        textField.placeholder = "введите email"
+        textField.placeholder = "Введите email"
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.clearButtonMode = .always
@@ -66,7 +66,7 @@ class LogInViewController: UIViewController {
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.indent(size: 10)
         textField.tintColor = appMyColor
-        textField.placeholder = "введите пароль"
+        textField.placeholder = "Введите пароль"
         textField.clearButtonMode = .always
         textField.autocapitalizationType = .none
         textField.isSecureTextEntry = true

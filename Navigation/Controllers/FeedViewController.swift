@@ -1,5 +1,5 @@
 //
-//  ScheduleViewController.swift
+//  FeedViewController.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 07.03.2022.
